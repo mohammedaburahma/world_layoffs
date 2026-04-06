@@ -114,3 +114,55 @@ MODIFY COLUMN `date` DATE;
 
 SELECT *
 FROM layoffs_staging2;
+
+-- Null Values
+SELECT *
+FROM layoffs_staging2
+WHERE total_laid_off IS NULL
+AND percentage_laid_off IS NULL;
+
+SELECT *
+FROM layoffs_staging2
+WHERE industry IS NULL
+OR industry = '';
+
+SELECT *
+FROM layoffs_staging2
+WHERE company = 'Airbnb';
+
+SELECT st1.industry , st2.industry
+FROM layoffs_staging2 st2
+JOIN layoffs_staging2 st1
+	ON st1.company = st2.company
+    AND st1.location = st2.location
+WHERE (st1.industry IS NULL OR st1.industry = '')
+AND st2.industry IS NOT NULL;
+
+UPDATE layoffs_staging2
+SET industry = NULL
+WHERE industry = '';
+
+UPDATE layoffs_staging2 st1
+JOIN layoffs_staging2 st2
+	ON st1.company = st2.company
+SET st1.industry = st2.industry
+WHERE (st1.industry IS NULL)
+AND st2.industry IS NOT NULL;
+
+-- Deleting Data where both total_laid_off, and percentage_laid_off is null
+SELECT *
+FROM layoffs_staging2
+WHERE total_laid_off IS NULL
+AND percentage_laid_off IS NULL;
+
+DELETE
+FROM layoffs_staging2
+WHERE total_laid_off IS NULL
+AND percentage_laid_off IS NULL;
+
+SELECT *
+FROM layoffs_staging2;
+
+-- Dropping the row_num column
+ALTER TABLE layoffs_staging2
+DROP COLUMN row_num;
